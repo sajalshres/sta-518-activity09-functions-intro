@@ -396,7 +396,7 @@ quantile_range <- function(x, probs = c(0, 1), ...) {
   }
   
   # set changing values
-  results <- quantile(x, probs)
+  results <- quantile(x, probs, ...)
   larger_value <- results[length(results)]
   smaller_value <- results[1]
   
@@ -476,13 +476,13 @@ function). Test that this worked by running the following lines of code:
 quantile_range(gapminder$lifeExp, probs = c(0.25, 0.75), type = 1)
 ```
 
-    ## [1] 22.6475
+    ## [1] 22.686
 
 ``` r
 quantile_range(gapminder$lifeExp, probs = c(0.25, 0.75), type = 4)
 ```
 
-    ## [1] 22.6475
+    ## [1] 22.686
 
 The `...` argument is useful for when you want to provide the ability to
 pass arbitrary arguments to another function, but don’t want to
@@ -507,15 +507,20 @@ In the code chunk below, calculate the IQR for the variable `gdpPercap`
 in the gapminder dataset for each continent in the year 2002.
 
 ``` r
-gdp_percap_continent_2002 <- gapminder %>%
+gapminder %>%
   filter(year==2002) %>%
   group_by(continent) %>%
-  summarise(quantile_gdp = IQR(gdpPercap))
-
-quantile_range(gdp_percap_continent_2002$quantile_gdp)
+  summarise(quantile_gdp = quantile_range(gdpPercap, c(0.25, 0.75))) %>%
+  knitr::kable()
 ```
 
-    ## [1] 16117.2
+| continent | quantile\_gdp |
+|:----------|--------------:|
+| Africa    |      2534.309 |
+| Americas  |      3939.293 |
+| Asia      |     17141.276 |
+| Europe    |     18651.512 |
+| Oceania   |      3748.977 |
 
 ### Unit tests
 
